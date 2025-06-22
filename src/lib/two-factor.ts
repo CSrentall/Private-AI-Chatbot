@@ -1,7 +1,6 @@
-
 import speakeasy from 'speakeasy'
 import QRCode from 'qrcode'
-import { supabaseAdmin } from './supabase'
+import { supabaseAdmin } from './supabase-admin'
 import { auditLogger } from './audit-logger'
 
 export interface TwoFactorSetup {

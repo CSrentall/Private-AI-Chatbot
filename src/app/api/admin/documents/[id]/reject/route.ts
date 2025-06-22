@@ -1,6 +1,6 @@
-
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient, supabaseAdmin } from '@/lib/supabase'
+import { createServerClient } from '@/lib/supabase-server'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 import { auditLogger } from '@/lib/audit-logger'
 import { rateLimitByType } from '@/lib/rate-limit'
 

@@ -1,6 +1,6 @@
-
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient, supabaseAdmin } from '@/lib/supabase'
+import { createServerClient } from '@/lib/supabase-server'
+import { supabaseAdmin } from '@/lib/supabase-admin'
 import { OpenAIService } from '@/lib/openai'
 import { DocumentProcessor } from '@/lib/document-processor'
 import { auditLogger } from '@/lib/audit-logger'

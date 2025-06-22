@@ -1,9 +1,8 @@
-
 'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@/lib/supabase'
+import { createBrowserClient } from '@/lib/supabase-client'
 import { Bot, FileText, Settings, Shield, LogOut, Menu, X } from 'lucide-react'
 import ChatInterface from '@/components/ChatInterface'
 import DocumentUpload from '@/components/DocumentUpload'
@@ -18,6 +17,8 @@ interface User {
   name: string
   role: 'USER' | 'ADMIN' | 'SUPER_ADMIN'
   twoFactorEnabled: boolean
+  createdAt: string
+  lastLogin?: string
 }
 
 export default function Dashboard() {
@@ -336,7 +337,10 @@ export default function Dashboard() {
                               <p className="text-sm text-yellow-700 mt-1">
                                 Als admin moet u 2FA inschakelen om toegang te krijgen tot admin functies.
                               </p>
-                              <button className="btn-primary mt-3 text-sm">
+                              <button 
+                                onClick={() => router.push('/auth/setup-2fa')}
+                                className="btn-primary mt-3 text-sm"
+                              >
                                 2FA Instellen
                               </button>
                             </div>

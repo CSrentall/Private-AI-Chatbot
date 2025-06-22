@@ -1,5 +1,4 @@
-
-import { supabaseAdmin } from './supabase'
+import { supabaseAdmin } from './supabase-admin'
 import { OpenAIService } from './openai'
 import { auditLogger } from './audit-logger'
 

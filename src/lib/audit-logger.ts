@@ -1,5 +1,4 @@
-
-import { supabaseAdmin } from './supabase'
+import { supabaseAdmin } from './supabase-admin'
 
 export type LogSeverity = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'CRITICAL'
 

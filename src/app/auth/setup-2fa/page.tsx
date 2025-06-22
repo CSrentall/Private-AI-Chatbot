@@ -1,9 +1,8 @@
-
 'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@/lib/supabase'
+import { createBrowserClient } from '@/lib/supabase-client'
 import { Shield, Copy, Download, CheckCircle, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 

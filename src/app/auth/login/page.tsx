@@ -1,10 +1,9 @@
-
 'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createBrowserClient } from '@/lib/supabase'
+import { createBrowserClient } from '@/lib/supabase-client'
 import { Bot, Mail, Lock, Eye, EyeOff, Shield } from 'lucide-react'
 import toast from 'react-hot-toast'
 
