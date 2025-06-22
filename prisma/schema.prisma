@@ -1,0 +1,193 @@
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                String             @id @default(cuid())
+  email             String             @unique
+  name              String?
+  role              UserRole           @default(USER)
+  isActive          Boolean            @default(true)
+  lastLogin         DateTime?
+  ipAddress         String?
+  twoFactorEnabled  Boolean            @default(false)
+  twoFactorSecret   String?
+  backupCodes       String[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  
+  // Relations
+  chatSessions      ChatSession[]
+  documents         Document[]
+  auditLogs         AuditLog[]
+  approvals         DocumentApproval[]
+  
+  @@map("users")
+}
+
+model ChatSession {
+  id          String    @id @default(cuid())
+  userId      String
+  mode        ChatMode  @default(TECHNICAL)
+  title       String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages    Message[]
+  
+  @@map("chat_sessions")
+}
+
+model Message {
+  id            String      @id @default(cuid())
+  sessionId     String
+  role          MessageRole
+  content       String
+  metadata      Json?
+  tokens        Int?
+  createdAt     DateTime    @default(now())
+  
+  // Relations
+  session       ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@map("messages")
+}
+
+model Document {
+  id              String             @id @default(cuid())
+  filename        String
+  originalName    String
+  mimeType        String
+  size            Int
+  uploadedBy      String
+  status          DocumentStatus     @default(PENDING)
+  approvedBy      String?
+  approvedAt      DateTime?
+  rejectedReason  String?
+  supabaseUrl     String?
+  isProcessed     Boolean            @default(false)
+  processingError String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  
+  // Relations
+  user            User               @relation(fields: [uploadedBy], references: [id])
+  chunks          DocumentChunk[]
+  approvals       DocumentApproval[]
+  
+  @@map("documents_metadata")
+}
+
+model DocumentChunk {
+  id          String   @id @default(cuid())
+  documentId  String
+  content     String
+  embedding   Json?
+  chunkIndex  Int
+  tokens      Int?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  
+  @@map("document_chunks")
+}
+
+model DocumentApproval {
+  id          String           @id @default(cuid())
+  documentId  String
+  userId      String
+  action      ApprovalAction
+  reason      String?
+  createdAt   DateTime         @default(now())
+  
+  // Relations
+  document    Document         @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user        User             @relation(fields: [userId], references: [id])
+  
+  @@map("document_approvals")
+}
+
+model AuditLog {
+  id          String     @id @default(cuid())
+  userId      String?
+  action      String
+  resource    String?
+  resourceId  String?
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?
+  severity    LogSeverity @default(INFO)
+  createdAt   DateTime   @default(now())
+  
+  // Relations
+  user        User?      @relation(fields: [userId], references: [id])
+  
+  @@map("audit_logs")
+}
+
+model SystemConfig {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("system_config")
+}
+
+// Enums
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum ChatMode {
+  TECHNICAL
+  INKOOP
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PROCESSING
+  PROCESSED
+  ERROR
+}
+
+enum ApprovalAction {
+  APPROVE
+  REJECT
+}
+
+enum LogSeverity {
+  DEBUG
+  INFO
+  WARN
+  ERROR
+  CRITICAL
+}
